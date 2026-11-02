@@ -49,6 +49,7 @@ function Header() {
         </button>
         <SoundToggle />
         <nav id="site-nav" className={open ? 'site-nav is-open' : 'site-nav'}>
+          <a href="#fresh" onClick={close}>Fresh stock</a>
           <a href="#products" onClick={close}>Products</a>
           <a href="#why" onClick={close}>Why us</a>
           <a href="#order" onClick={close}>How to order</a>
@@ -77,7 +78,77 @@ function Hero() {
           <p className="hero__hint">Tap anywhere to crack a coconut. Scroll down and watch one drop.</p>
         </div>
         <div className="hero__art">
-          <PalmScene className="hero__palm" />
+          <HeroPhoto />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HeroPhoto() {
+  const [failed, setFailed] = useState(false);
+  if (failed) return <PalmScene className="hero__palm" />;
+  return (
+    <figure className="hero__photo">
+      <img
+        src="/media/pollachi-coconut-farm.jpg"
+        alt="Tall coconut palms in a sunlit farm in Pollachi"
+        width="400"
+        height="500"
+        onError={() => setFailed(true)}
+      />
+    </figure>
+  );
+}
+
+function FreshStock() {
+  const tel = `tel:${BUSINESS.phone.replace(/\s/g, '')}`;
+  const wa = `https://wa.me/${BUSINESS.whatsapp}?text=${encodeURIComponent('Hello, I want to know today’s coconut rate.')}`;
+  const [videoFailed, setVideoFailed] = useState(false);
+  return (
+    <section id="fresh" className="fresh">
+      <div className="wrap fresh__inner">
+        <div className="fresh__media">
+          {videoFailed ? (
+            <PalmScene className="fresh__fallback" />
+          ) : (
+            <video
+              className="fresh__video"
+              src="/media/promo.mp4"
+              poster="/media/promo-poster.jpg"
+              autoPlay
+              muted
+              loop
+              playsInline
+              controls
+              preload="metadata"
+              onError={() => setVideoFailed(true)}
+            >
+              Fresh coconuts available. We buy and sell. Call {BUSINESS.phone}.
+            </video>
+          )}
+        </div>
+        <div className="fresh__copy">
+          <h2 className="section__title">Fresh coconuts available today</h2>
+          <p className="fresh__lead">
+            Straight from the farm, ready for pickup or delivery. We sell to shops, hotels and homes,
+            and we buy coconuts from farmers at a fair rate.
+          </p>
+          <div className="fresh__cards">
+            <div className="fresh__card">
+              <h3>Want to buy?</h3>
+              <p>Tender coconuts, mature coconuts and copra in any quantity.</p>
+            </div>
+            <div className="fresh__card">
+              <h3>Want to sell?</h3>
+              <p>Farmers, call us with your quantity. We collect from the farm.</p>
+            </div>
+          </div>
+          <a className="fresh__phone" href={tel}>{BUSINESS.phone}</a>
+          <div className="fresh__actions">
+            <a href={tel} className="btn btn--sun">Call now</a>
+            <a href={wa} className="btn btn--wa" target="_blank" rel="noopener">WhatsApp us</a>
+          </div>
         </div>
       </div>
     </section>
@@ -219,6 +290,7 @@ export default function App() {
       <Header />
       <main>
         <Hero />
+        <FreshStock />
         <Products />
         <WhyUs />
         <HowToOrder />
