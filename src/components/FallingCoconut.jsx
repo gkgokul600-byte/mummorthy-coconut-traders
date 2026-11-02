@@ -24,7 +24,8 @@ export default function FallingCoconut() {
       const max = Math.max(1, doc.scrollHeight - window.innerHeight);
       const progress = Math.min(1, Math.max(0, window.scrollY / max));
       const size = el.offsetWidth;
-      const travel = window.innerHeight - size - 24;
+      const start = 88; // begin just below the sticky header
+      const travel = window.innerHeight - size - 24 - start;
 
       const nowLanded = progress > 0.985;
       if (nowLanded !== landedRef.current) {
@@ -34,11 +35,11 @@ export default function FallingCoconut() {
       }
 
       if (reduce) {
-        el.style.transform = `translate3d(0, ${travel}px, 0)`;
+        el.style.transform = `translate3d(0, ${start + travel}px, 0)`;
         return;
       }
       const fall = progress * progress * 0.35 + progress * 0.65;
-      const y = 16 + fall * travel;
+      const y = start + fall * travel;
       const sway = Math.sin(progress * Math.PI * 6) * 18 * (1 - progress);
       // settle upright on landing so the split reads clearly
       const spin = nowLanded ? 0 : progress * 900;
