@@ -1,23 +1,29 @@
 import { useState } from 'react';
 import { BUSINESS, PRODUCTS } from './config.js';
-import { Coconut, HalfCoconut, TenderCoconut, PalmScene } from './components/CoconutArt.jsx';
+import { Coconut, HalfCoconut, TenderCoconut, HuskPile, PalmScene } from './components/CoconutArt.jsx';
+import TapCrack from './components/TapCrack.jsx';
+import { isMuted, setMuted } from './crackSound.js';
 import FallingCoconut from './components/FallingCoconut.jsx';
 
 function ProductArt({ art }) {
-  if (art === 'tender') return <TenderCoconut size={120} />;
+  if (art === 'tender') return <TenderCoconut size={130} />;
   if (art === 'half') return <HalfCoconut size={140} />;
-  if (art === 'husk')
-    return (
-      <svg width="130" height="110" viewBox="0 0 130 110" aria-hidden="true">
-        <path d="M10 90 C 30 40, 60 30, 70 20 C 80 40, 110 60, 120 90 Z" fill="#B68552" />
-        <g stroke="#7A4E24" strokeWidth="2.5" strokeLinecap="round">
-          <path d="M30 86 C 40 60, 55 45, 66 30" /><path d="M48 88 C 56 64, 64 50, 70 34" />
-          <path d="M66 88 C 70 66, 74 52, 74 36" /><path d="M86 88 C 84 66, 80 52, 76 38" />
-          <path d="M104 88 C 96 68, 88 54, 80 40" />
-        </g>
-      </svg>
-    );
+  if (art === 'husk') return <HuskPile size={140} />;
   return <Coconut size={110} />;
+}
+
+function SoundToggle() {
+  const [off, setOff] = useState(isMuted());
+  return (
+    <button
+      type="button"
+      className="sound-toggle"
+      aria-pressed={!off}
+      onClick={() => { setMuted(!off); setOff(!off); }}
+    >
+      {off ? 'Sound off' : 'Sound on'}
+    </button>
+  );
 }
 
 function Header() {
@@ -41,6 +47,7 @@ function Header() {
         >
           {open ? 'Close' : 'Menu'}
         </button>
+        <SoundToggle />
         <nav id="site-nav" className={open ? 'site-nav is-open' : 'site-nav'}>
           <a href="#products" onClick={close}>Products</a>
           <a href="#why" onClick={close}>Why us</a>
@@ -67,7 +74,7 @@ function Hero() {
             <a href="#contact" className="btn btn--sun">Request today’s price</a>
             <a href={`tel:${BUSINESS.phone.replace(/\s/g, '')}`} className="btn btn--ghost">Call {BUSINESS.phone}</a>
           </div>
-          <p className="hero__hint">Scroll down — one of our coconuts is about to drop.</p>
+          <p className="hero__hint">Tap anywhere to crack a coconut. Scroll down and watch one drop.</p>
         </div>
         <div className="hero__art">
           <PalmScene className="hero__palm" />
@@ -224,6 +231,7 @@ export default function App() {
         </div>
       </footer>
       <FallingCoconut />
+      <TapCrack />
     </>
   );
 }
