@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { Coconut } from './CoconutArt.jsx';
+import { playCrack } from '../crackSound.js';
 
 /**
  * A coconut that falls from the top of the page to the bottom as you scroll.
- * It spins while falling, sways slightly like it is dropping through air,
- * and lands with a small bounce when you reach the end of the page.
+ * It spins and sways while falling, then cracks open with a sound when you
+ * reach the end of the page. Scroll back up and it closes again.
  */
 export default function FallingCoconut() {
   const wrapRef = useRef(null);
   const [landed, setLanded] = useState(false);
+  const landedRef = useRef(false);
 
   useEffect(() => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -24,17 +26,23 @@ export default function FallingCoconut() {
       const size = el.offsetWidth;
       const travel = window.innerHeight - size - 24;
 
+      const nowLanded = progress > 0.985;
+      if (nowLanded !== landedRef.current) {
+        landedRef.current = nowLanded;
+        setLanded(nowLanded);
+        if (nowLanded) playCrack(1);
+      }
+
       if (reduce) {
         el.style.transform = `translate3d(0, ${travel}px, 0)`;
         return;
       }
-      // ease-in so it accelerates like gravity
       const fall = progress * progress * 0.35 + progress * 0.65;
       const y = 16 + fall * travel;
       const sway = Math.sin(progress * Math.PI * 6) * 18 * (1 - progress);
-      const spin = progress * 900;
+      // settle upright on landing so the split reads clearly
+      const spin = nowLanded ? 0 : progress * 900;
       el.style.transform = `translate3d(${sway}px, ${y}px, 0) rotate(${spin}deg)`;
-      setLanded(progress > 0.985);
     };
 
     const onScroll = () => {
@@ -54,8 +62,10 @@ export default function FallingCoconut() {
   return (
     <div className="falling-coconut" aria-hidden="true">
       <div ref={wrapRef} className="falling-coconut__body">
-        <div className={landed ? 'falling-coconut__bounce is-landed' : 'falling-coconut__bounce'}>
-          <Coconut size={72} />
+        <div className={landed ? 'falling-coconut__split is-landed' : 'falling-coconut__split'}>
+          <span className="falling-coconut__meat" />
+          <div className="falling-coconut__half falling-coconut__half--l"><Coconut size={80} seed={5} /></div>
+          <div className="falling-coconut__half falling-coconut__half--r"><Coconut size={80} seed={5} /></div>
         </div>
       </div>
     </div>
