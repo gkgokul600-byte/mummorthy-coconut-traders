@@ -1,8 +1,8 @@
 // Edit your business details here — they update everywhere on the site.
 export const BUSINESS = {
   name: 'Mummorthy Coconut Traders',
-  phone: '+91 00000 00000',            // shown on the site
-  whatsapp: '910000000000',            // digits only, with country code (used for wa.me link)
+  phone: '+91 90800 94817',            // shown on the site
+  whatsapp: '919080094817',            // digits only, with country code (used for wa.me link)
   email: 'hello@example.com',
   address: 'Yard address, Town, District, PIN',
   hours: 'Mon–Sat, 6 am – 7 pm',
